@@ -2,7 +2,6 @@ using Identity.Model.Database.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
@@ -20,7 +19,9 @@ namespace Identity.Model.Database.Core
         {
             var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
             var database = serviceProvider.GetService<DatabaseContext>();
-            
+
+            database.Database.Migrate();
+
             SeedAdminUser(userManager, database);
         }
 

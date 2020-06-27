@@ -1,0 +1,18 @@
+version: "3"
+services:
+  api:
+    build: .
+    container_name: identity-api
+    ports:
+      - "80:80"
+    depends_on: 
+      - database
+  
+  database:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: identity-database
+    ports:  
+        - "1433:1433"
+    environment:
+        SA_PASSWORD: "123qweEWQ#@!"
+        ACCEPT_EULA: "Y"
