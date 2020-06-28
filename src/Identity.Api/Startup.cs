@@ -45,8 +45,6 @@ namespace Identity.Api
             {
                 endpoints.MapControllers();
             });
-
-            DatabaseContext.SeedData(serviceProvider);
         }
     }
 }

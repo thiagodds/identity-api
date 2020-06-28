@@ -15,12 +15,15 @@ namespace Identity.Model.Database.Core
 
         }
 
-        public static void SeedData(IServiceProvider serviceProvider)
+        public static void SeedData(IServiceProvider serviceProvider, bool runMigrateDatabase = false)
         {
             var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
             var database = serviceProvider.GetService<DatabaseContext>();
 
-            database.Database.Migrate();
+            if (runMigrateDatabase)
+            {
+                database.Database.Migrate();
+            }            
 
             SeedAdminUser(userManager, database);
         }
