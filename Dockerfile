@@ -4,6 +4,8 @@ WORKDIR /app
 COPY src/ ./
 
 RUN dotnet restore
+RUN dotnet build
+RUN dotnet test
 RUN dotnet publish -c Release -o out
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.5-focal
