@@ -1,5 +1,5 @@
 ﻿using Identity.Api;
-using Identity.Model.Api.User;
+using Identity.Model.Api.Dto.User;
 using Identity.Test.Core;
 using Identity.Test.Core.Model;
 using System.Linq;
@@ -38,6 +38,68 @@ namespace Identity.Test.Integration.User
                 Assert.Equal("The Password field is required.", responseData.Errors["Password"].Single());
                 Assert.Equal("The FirstName field is required.", responseData.Errors["FirstName"].Single());
             }
+        }
+
+        [Fact]
+        public async Task CreateNewUser_DuplicatedEmail()
+        {
+            var httpClient = _factory.CreateClient();
+            var response = await httpClient.PostAsJsonAsync("/api/user", new UserDto
+            {
+                Email = "admin@email.com",
+                FirstName = "FirstName",
+                Password = "Password",
+                LastName = "LastName"
+            });
+
+            Assert.False(response.IsSuccessStatusCode);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var responseData = await response.Content.ReadAsObject<ErrorResponse>();
+
+                Assert.Single(responseData.Errors);
+                Assert.NotNull(responseData.Errors["Email"]);
+            }
+        }
+
+        [Fact]
+        public async Task CreateNewUser_InvalidPassword()
+        {
+            var httpClient = _factory.CreateClient();
+            var response = await httpClient.PostAsJsonAsync("/api/user", new UserDto
+            {
+                Email = "email@email.com",
+                FirstName = "FirstName",
+                Password = "Password",
+                LastName = "LastName"
+            });
+
+            Assert.False(response.IsSuccessStatusCode);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var responseData = await response.Content.ReadAsObject<ErrorResponse>();
+
+                var errorsKeys = responseData.Errors.Select(x => x.Key);
+                Assert.Contains<string>("PasswordRequiresNonAlphanumeric", errorsKeys);
+                Assert.Contains<string>("PasswordRequiresDigit", errorsKeys);
+            }
+        }
+        
+        [Fact]
+        public async Task CreateNewUser_Success()
+        {
+            var httpClient = _factory.CreateClient();
+            var response = await httpClient.PostAsJsonAsync("/api/user", new UserDto
+            {
+                Email = "email@email.com",
+                FirstName = "FirstName",
+                Password = "123qweEWQ#@!",
+                LastName = "LastName"
+            });
+
+            Assert.True(response.IsSuccessStatusCode);
         }
     }
 }
