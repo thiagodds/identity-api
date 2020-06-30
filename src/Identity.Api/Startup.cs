@@ -6,6 +6,7 @@ using Identity.Model.Database.Models;
 using Identity.Model.Database.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +28,9 @@ namespace Identity.Api
         {
             services.AddControllers();
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SQLServerConnectionString")), ServiceLifetime.Transient);
-            services.AddIdentityCore<ApplicationUser>().AddEntityFrameworkStores<DatabaseContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                    .AddEntityFrameworkStores<DatabaseContext>()
+                    .AddDefaultTokenProviders();
 
             services.RegisterRepositories();
             services.RegisterValidators();
@@ -48,6 +51,7 @@ namespace Identity.Api
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

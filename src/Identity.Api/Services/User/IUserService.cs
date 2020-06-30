@@ -7,5 +7,6 @@ namespace Identity.Api.Services.User
     public interface IUserService
     {
         Task<IdentityResult> CreateNewUser(UserDto userDto);
+        Task<string> Login(LoginDto loginDto);
     }
 }
